@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Lost Item | GL Bajaj Lost & Found</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#070B19',
+                            800: '#0B132B',
+                            700: '#1C2541',
+                            600: '#2A365C',
+                        },
+                        teal: {
+                            400: '#2DD4BF',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070B19; }
+        ::-webkit-scrollbar-thumb { background: #1C2541; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2A365C; }
+
+        /* Form input date/time icon coloring for dark mode */
+        ::-webkit-calendar-picker-indicator {
+            filter: invert(1) opacity(0.6);
+            cursor: pointer;
+        }
+        ::-webkit-calendar-picker-indicator:hover {
+            filter: invert(1) opacity(1);
+        }
+    </style>
+    <!-- Auth Check IN THE HEAD to prevent page flash -->
+    <script src="auth.js"></script>
+    <script>
+        // Run immediately before the body even starts loading
+        requireAuth();
+    </script>
+
+</head>
+<body class="bg-navy-800 text-white font-poppins antialiased selection:bg-teal-500 selection:text-white">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-navy-900/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="index.html" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group">
+                    <div class="bg-teal-500/20 p-2 rounded-xl text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-all duration-300">
+                        <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-xl tracking-wide leading-none">Lost<span class="text-teal-400">&</span>Found</span>
+                        <span class="text-[10px] text-gray-400 tracking-wider mt-1 uppercase">GL Bajaj Portal</span>
+                    </div>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 font-medium hover:text-white transition-colors">Home</a>
+                    <a href="browse.html?type=lost" class="text-gray-300 font-medium hover:text-white transition-colors">Lost Items</a>
+                    <a href="browse.html?type=found" class="text-gray-300 font-medium hover:text-white transition-colors">Found Items</a>
+                    
+                    <!-- Report Dropdown Indicator -->
+                    <div class="relative group py-6">
+                        <button class="text-teal-400 font-medium flex items-center gap-1 hover:text-teal-300 transition-colors">
+                            Report <i class="ph-bold ph-caret-down text-sm"></i>
+                        </button>
+                        <div class="absolute top-full left-0 mt-0 w-48 bg-navy-700 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <a href="report-lost.html" class="block px-4 py-3 text-sm text-teal-400 bg-white/5 hover:bg-white/10 transition-colors border-b border-white/5">Report Lost</a>
+                            <a href="report-found.html" class="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors">Report Found</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <div class="hidden md:flex items-center">
+                    <button class="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        Login
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-gray-300 hover:text-white">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="pt-32 pb-10 relative">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+            <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-red-500/10 rounded-full blur-[100px]"></div>
+        </div>
+        <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center justify-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full text-sm font-medium mb-4">
+                <i class="ph-fill ph-warning-circle"></i> Lost Item Report
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+                Report a Lost Item
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Provide the details below so we can help you find your item across the campus network.
+            </p>
+        </div>
+    </section>
+
+    <!-- FORM SECTION -->
+    <section class="pb-24 relative z-10">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="bg-navy-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-10 shadow-2xl">
+                
+                <!-- Error Message Banner (Hidden by default) -->
+                <div id="errorBanner" class="hidden mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3">
+                    <i class="ph-fill ph-warning-circle text-red-400 text-xl mt-0.5"></i>
+                    <div>
+                        <h4 class="text-red-400 font-medium">Please check your inputs</h4>
+                        <p class="text-sm text-gray-300 mt-1">Some required fields are missing or incomplete. Please fill them out to continue.</p>
+                    </div>
+                </div>
+
+                <form id="lostForm" novalidate>
+                    
+                    <!-- Item Details Section -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                            <i class="ph-fill ph-box-box text-teal-400"></i> Item Details
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Item Name -->
+                            <div>
+                                <label for="itemName" class="block text-sm font-medium text-gray-300 mb-2">Item Name <span class="text-red-400">*</span></label>
+                                <input type="text" id="itemName" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="e.g. Black Leather Wallet">
+                            </div>
+
+                            <!-- Category & Location Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="itemCategory" class="block text-sm font-medium text-gray-300 mb-2">Category <span class="text-red-400">*</span></label>
+                                    <select id="itemCategory" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300 appearance-none cursor-pointer">
+                                        <option value="" disabled selected>Select a category</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="documents">Documents</option>
+                                        <option value="books">Books</option>
+                                        <option value="accessories">Accessories</option>
+                                        <option value="personal">Personal</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="itemLocation" class="block text-sm font-medium text-gray-300 mb-2">Lost Location <span class="text-red-400">*</span></label>
+                                    <select id="itemLocation" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300 appearance-none cursor-pointer">
+                                        <option value="" disabled selected>Select approximate location</option>
+                                        <option value="library">Library</option>
+                                        <option value="canteen">Canteen</option>
+                                        <option value="lab block">Lab Block</option>
+                                        <option value="main gate">Main Gate</option>
+                                        <option value="auditorium">Auditorium</option>
+                                        <option value="parking">Parking</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Date & Time Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="itemDate" class="block text-sm font-medium text-gray-300 mb-2">Date Lost <span class="text-red-400">*</span></label>
+                                    <input type="date" id="itemDate" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300">
+                                </div>
+                                <div>
+                                    <label for="itemTime" class="block text-sm font-medium text-gray-300 mb-2">Approximate Time <span class="text-gray-500 font-normal">(Optional)</span></label>
+                                    <input type="time" id="itemTime" class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300">
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <label for="itemDesc" class="block text-sm font-medium text-gray-300 mb-2">Item Description <span class="text-red-400">*</span></label>
+                                <textarea id="itemDesc" rows="4" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="Describe the item, color, brand, unique marks, etc."></textarea>
+                            </div>
+
+                            <!-- Image Upload -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Upload Item Image <span class="text-gray-500 font-normal">(Optional but recommended)</span></label>
+                                
+                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-white/10 border-dashed rounded-xl bg-navy-800 hover:bg-navy-700/50 transition-colors group relative cursor-pointer overflow-hidden" id="dropZone">
+                                    
+                                    <div class="space-y-1 text-center" id="uploadPlaceholder">
+                                        <i class="ph-fill ph-image text-4xl text-gray-400 mb-2 group-hover:text-teal-400 transition-colors"></i>
+                                        <div class="flex text-sm text-gray-400 justify-center">
+                                            <label for="itemImage" class="relative cursor-pointer rounded-md font-medium text-teal-400 hover:text-teal-300 focus-within:outline-none">
+                                                <span>Upload a file</span>
+                                                <input id="itemImage" name="itemImage" type="file" class="sr-only" accept="image/*">
+                                            </label>
+                                            <p class="pl-1">or drag and drop</p>
+                                        </div>
+                                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                                    </div>
+
+                                    <!-- Image Preview (Hidden by default) -->
+                                    <div id="imagePreviewContainer" class="hidden absolute inset-0 w-full h-full bg-navy-800 flex items-center justify-center">
+                                        <img id="imagePreview" src="" alt="Preview" class="h-full w-auto object-contain">
+                                        <button type="button" id="removeImageBtn" class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-lg">
+                                            <i class="ph-bold ph-x"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-semibold mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                            <i class="ph-fill ph-address-book text-teal-400"></i> Contact Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label for="contactName" class="block text-sm font-medium text-gray-300 mb-2">Full Name <span class="text-red-400">*</span></label>
+                                <input type="text" id="contactName" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="e.g. Prashant Singh">
+                            </div>
+                            <div>
+                                <label for="contactEmail" class="block text-sm font-medium text-gray-300 mb-2">Email Address <span class="text-red-400">*</span></label>
+                                <input type="email" id="contactEmail" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="student@glbajaj.ac.in">
+                            </div>
+                            <div>
+                                <label for="contactPhone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number <span class="text-red-400">*</span></label>
+                                <input type="tel" id="contactPhone" required class="w-full px-4 py-3 bg-navy-800 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="+91 XXXXX XXXXX">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="mt-8 pt-6 border-t border-white/10">
+                        <button type="submit" class="w-full py-4 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-xl text-lg shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-paper-plane-tilt"></i> Submit Lost Report
+                        </button>
+                        <p class="text-center text-sm text-gray-500 mt-4 flex items-center justify-center gap-1.5">
+                            <i class="ph-fill ph-lock-key text-gray-400"></i> Please provide accurate information so the item can be identified easily.
+                        </p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#050A17] border-t border-white/10 pt-12 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-xl tracking-wide">Lost<span class="text-teal-400">&</span>Found</span>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    &copy; 2026 GL Bajaj Institute of Technology & Management. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SUCCESS MODAL (Hidden by default) -->
+    <div id="successModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-navy-900/90 backdrop-blur-sm" id="modalBackdrop"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-navy-800 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl text-center transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+            <div class="w-20 h-20 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="ph-bold ph-check text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Report Submitted!</h3>
+            <p class="text-gray-400 mb-8">
+                Your lost item report has been successfully submitted. We'll notify you if someone reports a matching found item.
+            </p>
+            <div class="flex flex-col gap-3">
+                <a href="browse.html?type=found" class="w-full py-3 bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-xl transition-colors">
+                    Browse Found Items
+                </a>
+                <a href="index.html" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-xl transition-colors">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT FOR FORM HANDLING & PREVIEW -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('lostForm');
+            const errorBanner = document.getElementById('errorBanner');
+            
+            // Image Upload Elements
+            const fileInput = document.getElementById('itemImage');
+            const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const removeImageBtn = document.getElementById('removeImageBtn');
+
+            // Image Preview Logic
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
+                        uploadPlaceholder.classList.add('hidden');
+                        previewContainer.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Remove Image Logic
+            removeImageBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent form submission
+                fileInput.value = '';
+                imagePreview.src = '';
+                previewContainer.classList.add('hidden');
+                uploadPlaceholder.classList.remove('hidden');
+            });
+
+            // Form Validation & Submission Logic (Connected to Backend)
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                let isValid = true;
+                const requiredFields = form.querySelectorAll('[required]');
+
+                // Reset previous error styles
+                requiredFields.forEach(field => {
+                    field.classList.remove('border-red-500', 'focus:ring-red-500/50', 'focus:border-red-500');
+                    field.classList.add('border-white/10', 'focus:ring-teal-500/50', 'focus:border-teal-500');
+                });
+
+                // Validate each required field
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.remove('border-white/10', 'focus:ring-teal-500/50', 'focus:border-teal-500');
+                        field.classList.add('border-red-500', 'focus:ring-red-500/50', 'focus:border-red-500');
+                    }
+                });
+
+                if (!isValid) {
+                    // Show error banner and scroll to it
+                    errorBanner.classList.remove('hidden');
+                    errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return; // Yahan process rok do agar form invalid hai
+                } 
+                
+                // Agar form sahi hai, toh error banner hatao
+                errorBanner.classList.add('hidden');
+                
+                // Button ko loading state mein daalo
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Submitting...';
+                submitBtn.disabled = true;
+
+                try {
+                    const token = getToken(); // auth.js se token lo
+                    
+                    // Form se data uthao
+                    const reportData = {
+                        itemName: document.getElementById('itemName').value,
+                        category: document.getElementById('itemCategory').value,
+                        description: document.getElementById('itemDesc').value,
+                        location: document.getElementById('itemLocation').value,
+                        dateLost: document.getElementById('itemDate').value,
+                        contactName: document.getElementById('contactName').value,
+                        contactEmail: document.getElementById('contactEmail').value
+                    };
+
+                    // Backend API par bhejo
+                    const response = await fetch('http://localhost:5000/api/lost-items', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(reportData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Backend ne save kar liya, ab Success Modal dikhao
+                        const modal = document.getElementById('successModal');
+                        const modalContent = document.getElementById('modalContent');
+                        
+                        modal.classList.remove('hidden');
+                        setTimeout(() => {
+                            modalContent.classList.remove('scale-95', 'opacity-0');
+                            modalContent.classList.add('scale-100', 'opacity-100');
+                        }, 10);
+                        
+                        form.reset(); // Form clear kar do
+                        if(previewContainer) previewContainer.classList.add('hidden');
+                        if(uploadPlaceholder) uploadPlaceholder.classList.remove('hidden');
+                    } else {
+                        alert('Error: ' + (data.message || 'Failed to report item'));
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    alert('Server error. Make sure your Node backend is running.');
+                } finally {
+                    // Button ko wapas normal kar do
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

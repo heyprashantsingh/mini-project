@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | GL Bajaj Lost & Found</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#070B19',
+                            800: '#0B132B',
+                            700: '#1C2541',
+                            600: '#2A365C',
+                        },
+                        teal: {
+                            400: '#2DD4BF',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070B19; }
+        ::-webkit-scrollbar-thumb { background: #1C2541; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2A365C; }
+        
+        /* Dashboard Tabs transition */
+        .tab-btn.active { color: #2DD4BF; border-bottom-color: #2DD4BF; }
+    </style>
+    
+    <!-- Auth Protection: Redirects immediately if not logged in -->
+    <script src="auth.js"></script>
+    <script>requireAuth();</script>
+</head>
+<body class="bg-navy-800 text-white font-poppins antialiased selection:bg-teal-500 selection:text-white flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-navy-900/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div onclick="window.location.href='index.html'" class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
+                    <div class="bg-teal-500/20 p-2 rounded-xl text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-all duration-300">
+                        <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                    </div>
+                   <div class="flex flex-col">
+                        <span class="font-bold text-xl tracking-wide leading-none">Lost<span class="text-teal-400">&</span>Found</span>
+                        <span class="text-[9px] text-gray-400 mt-0.5 uppercase tracking-wider">GL Bajaj Portal</span>
+                   </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-300 font-medium hover:text-white transition-colors">Home</a>
+                    <a href="browse.html?type=lost" class="text-gray-300 font-medium hover:text-white transition-colors">Lost Items</a>
+                    <a href="browse.html?type=found" class="text-gray-300 font-medium hover:text-white transition-colors">Found Items</a>
+                    
+                    <!-- Report Dropdown -->
+                    <div class="relative group py-6">
+                        <button class="text-gray-300 font-medium flex items-center gap-1 hover:text-white transition-colors">
+                            Report <i class="ph-bold ph-caret-down text-sm"></i>
+                        </button>
+                        <div class="absolute top-full left-0 mt-0 w-48 bg-navy-700 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <a href="report-lost.html" class="block px-4 py-3 text-sm text-gray-300 hover:text-white transition-colors border-b border-white/5">Report Lost</a>
+                            <a href="report-found.html" class="block px-4 py-3 text-sm text-gray-300 hover:text-white transition-colors">Report Found</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Area (Populated by auth.js) -->
+                <div class="hidden md:flex items-center" id="desktopAuthContainer">
+                    <!-- auth.js will render the Dashboard/Logout dropdown here -->
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-gray-300 hover:text-white">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD CONTENT -->
+    <main class="flex-grow pt-32 pb-24 relative">
+        <!-- Background Glow Effects -->
+        <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- HEADER SECTION -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 items-center">
+                <!-- Welcome text -->
+                <div class="lg:col-span-2">
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-2 text-white flex items-center gap-3">
+                        Welcome back, <span id="dashUserName" class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-teal-200">User</span> 👋
+                    </h1>
+                    <p class="text-gray-400 text-lg">Manage your lost and found reports from one place.</p>
+                </div>
+
+                <!-- Mini Profile Card -->
+                <div class="lg:col-span-1 bg-navy-900/80 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex items-center justify-between shadow-xl">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-teal-500/20 text-teal-400 rounded-full flex items-center justify-center text-xl font-bold" id="dashUserInitial">U</div>
+                        <div>
+                            <h3 class="font-bold text-white text-sm" id="dashProfileName">User Name</h3>
+                            <p class="text-xs text-gray-400" id="dashProfileEmail">user@glbitm.ac.in</p>
+                            <span class="inline-block mt-1 text-[10px] px-2 py-0.5 bg-white/5 border border-white/10 rounded uppercase tracking-wider text-gray-300">Student</span>
+                        </div>
+                    </div>
+                    <!-- Added ID to trigger modal -->
+                    <button id="editProfileBtn" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-teal-400" title="Edit Profile">
+                        <i class="ph-bold ph-pencil-simple text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATISTICS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Stat 1 -->
+                <div class="bg-navy-700/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:-translate-y-1 hover:border-teal-500/30 transition-all duration-300 group shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                            <i class="ph-fill ph-files text-2xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-white">4</span>
+                    </div>
+                    <p class="text-sm text-gray-400 font-medium uppercase tracking-wider">Total Reports</p>
+                </div>
+                <!-- Stat 2 -->
+                <div class="bg-navy-700/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:-translate-y-1 hover:border-teal-500/30 transition-all duration-300 group shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center group-hover:bg-red-500/20 group-hover:text-red-400 transition-colors">
+                            <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-white">2</span>
+                    </div>
+                    <p class="text-sm text-gray-400 font-medium uppercase tracking-wider">Lost Items</p>
+                </div>
+                <!-- Stat 3 -->
+                <div class="bg-navy-700/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:-translate-y-1 hover:border-teal-500/30 transition-all duration-300 group shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                            <i class="ph-fill ph-hand-heart text-2xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-white">2</span>
+                    </div>
+                    <p class="text-sm text-gray-400 font-medium uppercase tracking-wider">Found Items</p>
+                </div>
+                <!-- Stat 4 -->
+                <div class="bg-navy-700/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 hover:-translate-y-1 hover:border-teal-500/30 transition-all duration-300 group shadow-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-white/5 text-white rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 group-hover:text-blue-400 transition-colors">
+                            <i class="ph-fill ph-check-circle text-2xl"></i>
+                        </div>
+                        <span class="text-3xl font-bold text-white">1</span>
+                    </div>
+                    <p class="text-sm text-gray-400 font-medium uppercase tracking-wider">Resolved</p>
+                </div>
+            </div>
+
+            <!-- MAIN LAYOUT: QUICK ACTIONS & MY REPORTS -->
+            <div class="flex flex-col gap-10">
+                
+                <!-- QUICK ACTIONS -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4 text-white flex items-center gap-2">
+                        <i class="ph-bold ph-lightning text-teal-400"></i> Quick Actions
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="window.location.href='report-lost.html'" class="p-4 bg-navy-900 border border-white/10 rounded-2xl hover:bg-white/5 transition-colors flex flex-col items-center justify-center gap-3 text-center group">
+                            <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                                <i class="ph-bold ph-plus text-xl"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Report Lost Item</span>
+                        </button>
+                        <button onclick="window.location.href='report-found.html'" class="p-4 bg-navy-900 border border-white/10 rounded-2xl hover:bg-white/5 transition-colors flex flex-col items-center justify-center gap-3 text-center group">
+                            <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                                <i class="ph-bold ph-handshake text-xl"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Report Found Item</span>
+                        </button>
+                        <button onclick="window.location.href='browse.html?type=lost'" class="p-4 bg-navy-900 border border-white/10 rounded-2xl hover:bg-white/5 transition-colors flex flex-col items-center justify-center gap-3 text-center group">
+                            <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                                <i class="ph-bold ph-magnifying-glass text-xl"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Browse Lost Items</span>
+                        </button>
+                        <button onclick="window.location.href='browse.html?type=found'" class="p-4 bg-navy-900 border border-white/10 rounded-2xl hover:bg-white/5 transition-colors flex flex-col items-center justify-center gap-3 text-center group">
+                            <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
+                                <i class="ph-bold ph-archive text-xl"></i>
+                            </div>
+                            <span class="text-sm font-medium text-gray-300 group-hover:text-white">Browse Found Items</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MY REPORTS -->
+                <!-- Added ID for anchor scrolling -->
+                <div id="my-reports" class="bg-navy-900/50 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl scroll-mt-24">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="ph-bold ph-folder-open text-teal-400"></i> My Reports
+                        </h2>
+                        
+                        <!-- Tabs -->
+                        <div class="flex overflow-x-auto pb-2 md:pb-0 space-x-2 hide-scrollbar">
+                            <button class="tab-btn active px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="All">All</button>
+                            <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="LOST">Lost</button>
+                            <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="FOUND">Found</button>
+                            <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="Pending">Pending</button>
+                            <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="Approved">Approved</button>
+                            <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors whitespace-nowrap" data-filter="Resolved">Resolved</button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Reports Grid -->
+                    <div id="reportsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+                        <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Empty State (Hidden by default) -->
+                    <div id="noReportsMsg" class="hidden flex-col items-center justify-center py-16 text-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4 text-gray-500">
+                            <i class="ph-fill ph-ghost text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-medium text-white mb-2">No reports found</h3>
+                        <p class="text-gray-400 text-sm">You haven't submitted any reports matching this filter.</p>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#050A17] border-t border-white/10 pt-12 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-xl tracking-wide">Lost<span class="text-teal-400">&</span>Found</span>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    &copy; 2026 GL Bajaj Institute of Technology & Management. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- EDIT PROFILE MODAL (Hidden by default) -->
+    <div id="editProfileModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-navy-900/90 backdrop-blur-sm" id="editModalBackdrop"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-navy-800 border border-white/10 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="editModalContent">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="ph-bold ph-pencil-simple text-teal-400"></i> Edit Profile
+                </h3>
+                <button id="closeEditModalBtn" class="text-gray-400 hover:text-white transition-colors p-1 bg-white/5 hover:bg-white/10 rounded-lg">
+                    <i class="ph-bold ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <form id="editProfileForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                    <input type="text" id="editNameInput" required class="w-full px-4 py-3 bg-navy-900 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="e.g. John Doe">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" id="editEmailInput" required class="w-full px-4 py-3 bg-navy-900 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all duration-300" placeholder="student@glbitm.ac.in">
+                </div>
+                
+                <div class="flex gap-4 mt-6">
+                    <button type="button" id="cancelEditModalBtn" class="flex-1 py-3 bg-transparent border border-white/10 hover:bg-white/5 text-white font-medium rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-teal-500/20">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD LOGIC (Database-Ready Schema & Modal Handling) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Populate User Header
+            const user = getCurrentUser(); // Uses logic from auth.js
+            if (user) {
+                const firstName = user.name.split(' ')[0];
+                document.getElementById('dashUserName').textContent = firstName;
+                document.getElementById('dashProfileName').textContent = user.name;
+                document.getElementById('dashProfileEmail').textContent = user.email;
+                document.getElementById('dashUserInitial').textContent = firstName.charAt(0).toUpperCase();
+            }
+
+            // --- EDIT PROFILE MODAL LOGIC ---
+            const editModal = document.getElementById('editProfileModal');
+            const editModalContent = document.getElementById('editModalContent');
+            const editBtn = document.getElementById('editProfileBtn');
+            const closeEditBtn = document.getElementById('closeEditModalBtn');
+            const cancelEditBtn = document.getElementById('cancelEditModalBtn');
+            const editForm = document.getElementById('editProfileForm');
+            const editNameInput = document.getElementById('editNameInput');
+            const editEmailInput = document.getElementById('editEmailInput');
+
+            const openEditModal = () => {
+                const currentUser = getCurrentUser();
+                if(currentUser) {
+                    editNameInput.value = currentUser.name;
+                    editEmailInput.value = currentUser.email;
+                }
+                editModal.classList.remove('hidden');
+                setTimeout(() => {
+                    editModalContent.classList.remove('scale-95', 'opacity-0');
+                    editModalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            };
+
+            const closeEditModal = () => {
+                editModalContent.classList.remove('scale-100', 'opacity-100');
+                editModalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    editModal.classList.add('hidden');
+                }, 300);
+            };
+
+            editBtn.addEventListener('click', openEditModal);
+            closeEditBtn.addEventListener('click', closeEditModal);
+            cancelEditBtn.addEventListener('click', closeEditModal);
+            document.getElementById('editModalBackdrop').addEventListener('click', closeEditModal);
+
+            // Handle Profile Update Save
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newName = editNameInput.value.trim();
+                const newEmail = editEmailInput.value.trim();
+                
+                if(newName && newEmail) {
+                    // Update current Session
+                    const currentUser = getCurrentUser();
+                    currentUser.name = newName;
+                    currentUser.email = newEmail;
+                    localStorage.setItem('glBajaj_session', JSON.stringify(currentUser));
+                    
+                    // Update Users DB
+                    let users = JSON.parse(localStorage.getItem('glBajaj_users')) || [];
+                    const userIndex = users.findIndex(u => u.id === currentUser.id);
+                    if(userIndex !== -1) {
+                        users[userIndex].name = newName;
+                        users[userIndex].email = newEmail;
+                        localStorage.setItem('glBajaj_users', JSON.stringify(users));
+                    }
+                    
+                    // Immediately Update Dashboard UI
+                    const firstName = newName.split(' ')[0];
+                    document.getElementById('dashUserName').textContent = firstName;
+                    document.getElementById('dashProfileName').textContent = newName;
+                    document.getElementById('dashProfileEmail').textContent = newEmail;
+                    document.getElementById('dashUserInitial').textContent = firstName.charAt(0).toUpperCase();
+                    
+                    // Update Navbar Dropdown name
+                    if (typeof updateNavbarUI === "function") {
+                        updateNavbarUI();
+                    }
+                    
+                    closeEditModal();
+                }
+            });
+
+
+            // 2. MOCK DATABASE
+            const mockDbReports = [
+                {
+                    id: 'wallet',
+                    userId: user ? user.id : '123',
+                    itemName: 'Black Leather Wallet',
+                    type: 'LOST',
+                    category: 'Personal',
+                    description: 'Lost my black leather wallet containing my ID and some cash.',
+                    location: 'Canteen',
+                    date: 'Aug 10, 2026',
+                    image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
+                    status: 'Pending'
+                },
+                {
+                    id: 'earbuds',
+                    userId: user ? user.id : '123',
+                    itemName: 'White Wireless Earbuds',
+                    type: 'LOST',
+                    category: 'Electronics',
+                    description: 'Left my AirPods Pro case on the reading table in the quiet zone.',
+                    location: 'Library',
+                    date: 'Aug 11, 2026',
+                    image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=80',
+                    status: 'Approved'
+                },
+                {
+                    id: 'bottle',
+                    userId: user ? user.id : '123',
+                    itemName: 'Milton Blue Water Bottle',
+                    type: 'FOUND',
+                    category: 'Other',
+                    description: 'Found a metallic blue flask outside the Chemistry Lab on the 2nd floor.',
+                    location: 'Lab Block',
+                    date: 'Aug 02, 2026',
+                    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=800&q=80',
+                    status: 'Pending'
+                },
+                {
+                    id: 'calculator',
+                    userId: user ? user.id : '123',
+                    itemName: 'Casio Scientific Calculator',
+                    type: 'FOUND',
+                    category: 'Electronics',
+                    description: 'Found a Casio fx-991EX calculator on the corner table near the billing counter.',
+                    location: 'Canteen',
+                    date: 'Jul 28, 2026',
+                    image: 'https://images.unsplash.com/photo-1587145820266-a5951ee6f620?auto=format&fit=crop&w=800&q=80',
+                    status: 'Resolved'
+                }
+            ];
+
+            const reportsGrid = document.getElementById('reportsGrid');
+            const noReportsMsg = document.getElementById('noReportsMsg');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+
+            // Badge Color Helper
+            const getStatusBadge = (status) => {
+                switch(status.toLowerCase()) {
+                    case 'pending': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+                    case 'approved': return 'bg-teal-500/20 text-teal-400 border-teal-500/30';
+                    case 'rejected': return 'bg-red-500/20 text-red-400 border-red-500/30';
+                    case 'resolved': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+                }
+            };
+
+            const getTypeBadge = (type) => {
+                return type === 'LOST' ? 'bg-red-500/90' : 'bg-teal-500/90';
+            };
+
+            // Render Function
+            const renderReports = (filter) => {
+                reportsGrid.innerHTML = '';
+                let visibleCount = 0;
+
+                mockDbReports.forEach(report => {
+                    // Check Filter
+                    const matchAll = filter === 'All';
+                    const matchType = report.type === filter;
+                    const matchStatus = report.status === filter;
+
+                    if (matchAll || matchType || matchStatus) {
+                        visibleCount++;
+                        const card = document.createElement('div');
+                        card.className = "item-card bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group";
+                        
+                        card.innerHTML = `
+                            <div class="h-48 overflow-hidden relative">
+                                <!-- Type Badge (LOST/FOUND) -->
+                                <div class="absolute top-3 right-3 z-10 px-3 py-1 ${getTypeBadge(report.type)} backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                                    ${report.type}
+                                </div>
+                                <!-- Status Badge -->
+                                <div class="absolute top-3 left-3 z-10 px-3 py-1 border ${getStatusBadge(report.status)} backdrop-blur-md text-xs font-bold rounded-full shadow-lg uppercase tracking-wider">
+                                    ${report.status}
+                                </div>
+                                <img src="${report.image}" alt="${report.itemName}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-6">
+                                <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">${report.category}</div>
+                                <h3 class="text-xl font-bold mb-2 text-white line-clamp-1">${report.itemName}</h3>
+                                <div class="space-y-2 mb-6 mt-4">
+                                    <div class="flex items-center text-sm text-gray-400 gap-2">
+                                        <i class="ph-fill ph-map-pin text-gray-300"></i> ${report.location}
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-400 gap-2">
+                                        <i class="ph-fill ph-calendar-blank text-gray-300"></i> ${report.date}
+                                    </div>
+                                </div>
+                                <a href="details.html?id=${report.id}" class="block w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors text-center">
+                                    View Details
+                                </a>
+                            </div>
+                        `;
+                        reportsGrid.appendChild(card);
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    noReportsMsg.classList.remove('hidden');
+                    noReportsMsg.classList.add('flex');
+                } else {
+                    noReportsMsg.classList.add('hidden');
+                    noReportsMsg.classList.remove('flex');
+                }
+            };
+
+            // Tab Click Events
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    tabBtns.forEach(b => b.classList.remove('active', 'text-teal-400', 'border-teal-400'));
+                    e.target.classList.add('active', 'text-teal-400', 'border-teal-400');
+                    renderReports(e.target.getAttribute('data-filter'));
+                });
+            });
+
+            // Initial Render
+            renderReports('All');
+        });
+    </script>
+</body>
+</html>

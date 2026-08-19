@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found | Campus Recovery Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            900: '#070B19', 
+                            800: '#0B132B', 
+                            700: '#1C2541', 
+                            600: '#2A365C', 
+                        },
+                        teal: {
+                            400: '#2DD4BF',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070B19; }
+        ::-webkit-scrollbar-thumb { background: #1C2541; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2A365C; }
+    </style>
+</head>
+<body class="bg-navy-800 text-white font-poppins antialiased selection:bg-teal-500 selection:text-white">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-navy-900/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer group">
+                    <div class="bg-teal-500/20 p-2 rounded-xl text-teal-400 group-hover:bg-teal-500 group-hover:text-white transition-all duration-300">
+                        <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                    </div>
+                   <div class="flex flex-col">
+                        <span class="font-bold text-xl tracking-wide">
+                            Lost<span class="text-teal-400">&</span>Found
+                        </span>
+                        <span class="text-[9px] text-gray-400 mt-0.5">
+                            GL Bajaj Institute of Technology & Management
+                        </span>
+                   </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-teal-400 font-medium">Home</a>
+                    <a href="browse.html?type=lost" class="text-gray-300 font-medium hover:text-white transition-colors">Lost Items</a>
+                    <a href="browse.html?type=found" class="text-gray-300 font-medium hover:text-white transition-colors">Found Items</a>
+                    
+                    <!-- Report Dropdown (Imported from browse.html) -->
+                    <div class="relative group py-6">
+                        <button class="text-gray-300 font-medium flex items-center gap-1 hover:text-white transition-colors">
+                            Report
+                            <i class="ph-bold ph-caret-down text-sm"></i>
+                        </button>
+                        <div class="absolute top-full left-0 mt-0 w-48 bg-navy-700 border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                            <a href="report-lost.html" class="block px-4 py-3 text-sm text-gray-300 hover:text-white transition-colors border-b border-white/5">
+                                Report Lost
+                            </a>
+                            <a href="report-found.html" class="block px-4 py-3 text-sm text-gray-300 hover:text-white transition-colors">
+                                Report Found
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Button / Profile Area (Controlled by auth.js) -->
+                <div class="hidden md:flex items-center" id="desktopAuthContainer">
+                    <a href="login.html" class="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all duration-300">
+                        Login
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-gray-300 hover:text-white">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Background Glow Effects -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+            <div class="absolute top-20 left-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-[120px]"></div>
+            <div class="absolute top-40 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                Lost Something? <br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">Let's Help You Find It.</span>
+            </h1>
+            <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-400 mb-10">
+                A simple, intelligent way to report, search, and recover lost belongings across the campus network.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto mb-10">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="ph ph-magnifying-glass text-xl text-gray-400 group-focus-within:text-teal-400 transition-colors"></i>
+                    </div>
+                    <input type="text" class="block w-full pl-12 pr-32 py-4 md:py-5 bg-navy-700/50 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 focus:bg-navy-700 transition-all duration-300 shadow-xl" placeholder="Search for keys, wallets, electronics...">
+                    <div class="absolute inset-y-2 right-2">
+                        <button onclick="window.location.href='browse.html'" class="h-full px-6 bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-xl transition-colors shadow-lg shadow-teal-500/25">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="window.location.href='report-lost.html'" class="flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-navy-900 font-semibold rounded-xl hover:bg-gray-100 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-white/10">
+                    <i class="ph-bold ph-megaphone text-xl"></i>
+                    Report Lost Item
+                </button>
+                <button onclick="window.location.href='report-found.html'" class="flex items-center justify-center gap-2 px-8 py-3.5 bg-navy-700 border border-white/10 text-white font-semibold rounded-xl hover:bg-navy-600 hover:border-white/20 hover:scale-[1.02] transition-all duration-300">
+                    <i class="ph-bold ph-hand-heart text-xl"></i>
+                    Report Found Item
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENTLY REPORTED ITEMS -->
+    <section class="py-20 bg-navy-900/50 relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Recently Reported</h2>
+                    <p class="text-gray-400">Latest items reported across the campus.</p>
+                </div>
+                <a href="browse.html" class="hidden md:flex items-center gap-2 text-teal-400 hover:text-teal-300 font-medium transition-colors">
+                    View All <i class="ph-bold ph-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Card 1: Backpack (LOST) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-red-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            LOST
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80" alt="Backpack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Accessories</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Puma Black Backpack</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Library
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Aug 05, 2026
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=backpack'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Earbuds (LOST) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-red-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            LOST
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=800&q=80" alt="Earbuds" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Electronics</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">White Wireless Earbuds</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Library
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Today, 10:15 AM
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=earbuds'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Wallet (LOST) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-red-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            LOST
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80" alt="Wallet" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Personal</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Black Leather Wallet</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Canteen
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Today, 1:30 PM
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=wallet'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 4: Calculator (FOUND) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-teal-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            FOUND
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1587145820266-a5951ee6f620?auto=format&fit=crop&w=800&q=80" alt="Calculator" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Electronics</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Casio Scientific Calculator</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Canteen
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Jul 28, 2026
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=calculator'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 5: Bottle (FOUND) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-teal-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            FOUND
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=800&q=80" alt="Water Bottle" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Other</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Milton Blue Water Bottle</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Lab Block
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Aug 02, 2026
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=bottle'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 6: ID Card (FOUND) -->
+                <div class="bg-navy-700 rounded-2xl border border-white/5 overflow-hidden hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300 group">
+                    <div class="h-48 overflow-hidden relative">
+                        <div class="absolute top-3 right-3 z-10 px-3 py-1 bg-teal-500/90 backdrop-blur text-white text-xs font-bold rounded-full shadow-lg">
+                            FOUND
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1544866092-1935c5ef2a8f?auto=format&fit=crop&w=800&q=80" alt="ID Card" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-teal-400 font-medium tracking-wider mb-2 uppercase">Documents</div>
+                        <h3 class="text-xl font-bold mb-4 text-white">Student ID Card</h3>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-map-pin text-gray-300"></i> Main Gate
+                            </div>
+                            <div class="flex items-center text-sm text-gray-400 gap-2">
+                                <i class="ph-fill ph-calendar-blank text-gray-300"></i> Aug 08, 2026
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='details.html?id=idcard'" class="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-medium transition-colors">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-10 text-center md:hidden">
+                <a href="browse.html" class="inline-flex items-center gap-2 text-teal-400 font-medium border border-teal-500/30 px-6 py-2.5 rounded-xl">
+                    View All Items
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="py-24 relative overflow-hidden">
+        <!-- Background element -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-teal-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold mb-4">How It Works</h2>
+                <p class="text-gray-400">Our streamlined process makes it easy to recover your lost belongings or help others find theirs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Step 1 -->
+                <div class="bg-navy-700/50 p-8 rounded-3xl border border-white/5 relative group hover:border-teal-500/30 transition-all duration-300">
+                    <div class="text-5xl font-bold text-white/5 absolute top-4 right-6 group-hover:text-teal-500/10 transition-colors">01</div>
+                    <div class="w-14 h-14 bg-teal-500/20 text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-note-pencil text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Report</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Create a detailed listing of the item you lost or found, including photos and location data.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-navy-700/50 p-8 rounded-3xl border border-white/5 relative group hover:border-teal-500/30 transition-all duration-300">
+                    <div class="text-5xl font-bold text-white/5 absolute top-4 right-6 group-hover:text-teal-500/10 transition-colors">02</div>
+                    <div class="w-14 h-14 bg-teal-500/20 text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Search</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Browse the portal or use our smart search to look through all recently reported items on campus.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-navy-700/50 p-8 rounded-3xl border border-white/5 relative group hover:border-teal-500/30 transition-all duration-300">
+                    <div class="text-5xl font-bold text-white/5 absolute top-4 right-6 group-hover:text-teal-500/10 transition-colors">03</div>
+                    <div class="w-14 h-14 bg-teal-500/20 text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-handshake text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Match</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Connect securely through the platform when a lost item matches a found listing.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-navy-700/50 p-8 rounded-3xl border border-white/5 relative group hover:border-teal-500/30 transition-all duration-300">
+                    <div class="text-5xl font-bold text-white/5 absolute top-4 right-6 group-hover:text-teal-500/10 transition-colors">04</div>
+                    <div class="w-14 h-14 bg-teal-500/20 text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="ph-fill ph-check-circle text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Return</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">Meet at a designated safe campus spot to verify ownership and return the item.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#050A17] border-t border-white/10 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
+                
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="bg-teal-500/20 p-2 rounded-xl text-teal-400">
+                            <i class="ph-fill ph-magnifying-glass text-xl"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-wide">Lost<span class="text-teal-400">&</span>Found</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
+                        A modern, digital solution designed to help college students and faculty easily report, manage, and recover lost items across the campus.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Quick Links</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="index.html" class="hover:text-teal-400 transition-colors">Home</a></li>
+                        <li><a href="browse.html?type=lost" class="hover:text-teal-400 transition-colors">Browse Lost Items</a></li>
+                        <li><a href="browse.html?type=found" class="hover:text-teal-400 transition-colors">Browse Found Items</a></li>
+                        <li><a href="report-lost.html" class="hover:text-teal-400 transition-colors">Report an Item</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Support</h4>
+                    <ul class="space-y-4 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Campus Safety</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-500 text-sm">
+                    &copy; 2026 Lost & Found Portal. All rights reserved.
+                </p>
+                <div class="flex items-center space-x-4 text-gray-500">
+                    <a href="#" class="hover:text-white transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="ph-fill ph-envelope-simple text-xl"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
